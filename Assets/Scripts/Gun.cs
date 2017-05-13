@@ -7,11 +7,15 @@ public class Gun : MonoBehaviour {
 	public int bullet;
 	public int bulletBox;
 	int residualBullet;
+	int reloadBullet;
 
 	[SerializeField] float coolTime;
 	float resetCoolTime;
 
+	bool isReload = false;
+
 	[SerializeField] AudioClip shootSound;
+	[SerializeField] AudioClip reloadSound;
 	AudioSource audioSource;
 
 	[SerializeField] GameObject muzzleSparkle;
@@ -31,12 +35,20 @@ public class Gun : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		coolTime -= Time.deltaTime;
+		reloadBullet = bullet - residualBullet;
 
 		if (Input.GetMouseButton(0) && residualBullet != 0) {
-			if (coolTime <= 0f){
+			if (coolTime <= 0f && isReload == false){
 				Shoot();
 			}
 		}
+
+		if (Input.GetKeyDown (KeyCode.R) && residualBullet < bullet && bulletBox > 0) {
+			isReload = true;
+			Reload ();
+			StartCoroutine ("WaitForReload");
+		}
+
 	}
 
 	void Shoot () {
@@ -55,5 +67,18 @@ public class Gun : MonoBehaviour {
 			Destroy (hitEffect, .2f);
 		}
 	}
+
+
+	 void Reload(){
+        audioSource.PlayOneShot (reloadSound);
+        residualBullet += reloadBullet;
+        bulletBox -= reloadBullet;
+    }
+
+	IEnumerator WaitForReload(){
+		yield return new WaitForSeconds (3);
+		isReload = false;
+	}
+
 
 }
