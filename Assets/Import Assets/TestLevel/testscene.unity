@@ -16980,6 +16980,7 @@ MonoBehaviour:
   bulletBox: 150
   coolTime: 0.5
   shootSound: {fileID: 8300000, guid: 8602b7d5cd15c1943a50aa53f171c8cf, type: 3}
+  reloadSound: {fileID: 8300000, guid: 3c5c1d4d7b9307c458890a4beb12e4ae, type: 3}
   muzzleSparkle: {fileID: 1681333724500828, guid: 5530bc1718c8d6248a49109f7d90a695,
     type: 2}
   hitSparkle: {fileID: 1556301465489146, guid: eeb94513c6bc0dc43a65f974c838c4b1, type: 2}
@@ -16993,7 +16994,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 8602b7d5cd15c1943a50aa53f171c8cf, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
