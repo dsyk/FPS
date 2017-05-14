@@ -40,6 +40,12 @@ public class Gun : MonoBehaviour {
 	//Score
 	[SerializeField] ScoreController ScoreController;
 
+	//スナイパー
+	[SerializeField] GameObject snipe;
+	[SerializeField] GameObject Player;
+	[SerializeField] float snipeViewingAngle;
+	bool isSniper = false;
+
 
 	// Use this for initialization
 	void Start () {
@@ -53,21 +59,33 @@ public class Gun : MonoBehaviour {
 		coolTime -= Time.deltaTime;
 		reloadBullet = bullet - residualBullet;
 
-		if (Input.GetMouseButton(0) && residualBullet != 0) {
-			if (coolTime <= 0f && isReload == false){
+		if (Input.GetMouseButtonDown(1)) {
+			if (!isSniper){
+				Snipe();
+				isSniper = true;
+			} else {
+				ResetSnipe();
+				isSniper = false;
+			}
+		}
+
+		if (Input.GetMouseButtonDown(0)) {
+			if (coolTime <= 0f && residualBullet != 0 && isReload == false) {
 				Shoot();
 			}
 		}
 
-		if (Input.GetKeyDown (KeyCode.R) && residualBullet < bullet && bulletBox > 0) {
-			isReload = true;
-			Reload ();
-			StartCoroutine ("WaitForReload");
+		if (Input.GetKeyDown (KeyCode.R)) {
+			if (residualBullet < bullet && bulletBox > 0) {
+				isReload = true;
+				Reload();
+				StartCoroutine ("WaitForReload");
+			}
 		}
 
 	}
 
-	void Shoot () {
+	void Shoot() {
 		audioSource.PlayOneShot (shootSound);
 		residualBullet -= 1;
 		coolTime = resetCoolTime;
@@ -83,16 +101,16 @@ public class Gun : MonoBehaviour {
 			Destroy (hitEffect, .2f);
 			
 			TargetController targetController = target.GetComponent<TargetController>();
-			if(hit.collider.gameObject.transform.root.gameObject == target　&& targetController.isRecovered){
+			if (hit.collider.gameObject.transform.root.gameObject == target　&& targetController.isRecovered){
 				hitDistance = Vector3.Distance(HeadMaker.transform.position, hit.point);
 				targetController.Attacked();
 				ScoreController.ScorePlus(hitDistance);
-				}
 			}
 		}
+	}
 
 
-	void Reload(){
+	void Reload() {
         audioSource.PlayOneShot (reloadSound);
         residualBullet += reloadBullet;
         bulletBox -= reloadBullet;
@@ -103,5 +121,15 @@ public class Gun : MonoBehaviour {
 		isReload = false;
 	}
 
+	void Snipe() {
+		Camera camera = Player.GetComponent<Camera>();
+		snipe.SetActive(true);
+		camera.fieldOfView = snipeViewingAngle;
+	}
 
+	void ResetSnipe() {
+		Camera camera = Player.GetComponent<Camera>();
+		snipe.SetActive(false);
+		camera.ResetFieldOfView();
+	}
 }
