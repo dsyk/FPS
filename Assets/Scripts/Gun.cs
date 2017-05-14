@@ -44,6 +44,7 @@ public class Gun : MonoBehaviour {
 	[SerializeField] GameObject snipe;
 	[SerializeField] GameObject Player;
 	[SerializeField] float snipeViewingAngle;
+	bool isSniper = false;
 
 
 	// Use this for initialization
@@ -59,13 +60,16 @@ public class Gun : MonoBehaviour {
 		reloadBullet = bullet - residualBullet;
 
 		if (Input.GetMouseButtonDown(1)) {
-			Snipe();
-		}
-		if (Input.GetMouseButtonUp(1)) {
-			ResetSnipe();
+			if (!isSniper){
+				Snipe();
+				isSniper = true;
+			} else {
+				ResetSnipe();
+				isSniper = false;
+			}
 		}
 
-		if (Input.GetMouseButton(0)) {
+		if (Input.GetMouseButtonDown(0)) {
 			if (coolTime <= 0f && residualBullet != 0 && isReload == false) {
 				Shoot();
 			}
