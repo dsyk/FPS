@@ -58,23 +58,30 @@ public class Gun : MonoBehaviour {
 		coolTime -= Time.deltaTime;
 		reloadBullet = bullet - residualBullet;
 
-		Snipe();
+		if (Input.GetMouseButtonDown(1)) {
+			Snipe();
+		}
+		if (Input.GetMouseButtonUp(1)) {
+			ResetSnipe();
+		}
 
-		if (Input.GetMouseButton(0) && residualBullet != 0) {
-			if (coolTime <= 0f && isReload == false){
+		if (Input.GetMouseButton(0)) {
+			if (coolTime <= 0f && residualBullet != 0 && isReload == false) {
 				Shoot();
 			}
 		}
 
-		if (Input.GetKeyDown (KeyCode.R) && residualBullet < bullet && bulletBox > 0) {
-			isReload = true;
-			Reload ();
-			StartCoroutine ("WaitForReload");
+		if (Input.GetKeyDown (KeyCode.R)) {
+			if (residualBullet < bullet && bulletBox > 0) {
+				isReload = true;
+				Reload();
+				StartCoroutine ("WaitForReload");
+			}
 		}
 
 	}
 
-	void Shoot () {
+	void Shoot() {
 		audioSource.PlayOneShot (shootSound);
 		residualBullet -= 1;
 		coolTime = resetCoolTime;
@@ -90,16 +97,16 @@ public class Gun : MonoBehaviour {
 			Destroy (hitEffect, .2f);
 			
 			TargetController targetController = target.GetComponent<TargetController>();
-			if(hit.collider.gameObject.transform.root.gameObject == target　&& targetController.isRecovered){
+			if (hit.collider.gameObject.transform.root.gameObject == target　&& targetController.isRecovered){
 				hitDistance = Vector3.Distance(HeadMaker.transform.position, hit.point);
 				targetController.Attacked();
 				ScoreController.ScorePlus(hitDistance);
-				}
 			}
 		}
+	}
 
 
-	void Reload(){
+	void Reload() {
         audioSource.PlayOneShot (reloadSound);
         residualBullet += reloadBullet;
         bulletBox -= reloadBullet;
@@ -110,17 +117,15 @@ public class Gun : MonoBehaviour {
 		isReload = false;
 	}
 
-	void Snipe(){
+	void Snipe() {
 		Camera camera = Player.GetComponent<Camera>();
-
-		if(Input.GetMouseButton(1)){
 		snipe.SetActive(true);
 		camera.fieldOfView = snipeViewingAngle;
-		}else{
-		snipe.SetActive(false);
-		camera.ResetFieldOfView();
-		}
 	}
 
-
+	void ResetSnipe() {
+		Camera camera = Player.GetComponent<Camera>();
+		snipe.SetActive(false);
+		camera.ResetFieldOfView();
+	}
 }
