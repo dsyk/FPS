@@ -40,6 +40,11 @@ public class Gun : MonoBehaviour {
 	//Score
 	[SerializeField] ScoreController ScoreController;
 
+	//スナイパー
+	[SerializeField] GameObject snipe;
+	[SerializeField] GameObject Player;
+	[SerializeField] float snipeViewingAngle;
+
 
 	// Use this for initialization
 	void Start () {
@@ -52,6 +57,8 @@ public class Gun : MonoBehaviour {
 	void Update () {
 		coolTime -= Time.deltaTime;
 		reloadBullet = bullet - residualBullet;
+
+		Snipe();
 
 		if (Input.GetMouseButton(0) && residualBullet != 0) {
 			if (coolTime <= 0f && isReload == false){
@@ -101,6 +108,18 @@ public class Gun : MonoBehaviour {
 	IEnumerator WaitForReload(){
 		yield return new WaitForSeconds (3);
 		isReload = false;
+	}
+
+	void Snipe(){
+		Camera camera = Player.GetComponent<Camera>();
+
+		if(Input.GetMouseButton(1)){
+		snipe.SetActive(true);
+		camera.fieldOfView = snipeViewingAngle;
+		}else{
+		snipe.SetActive(false);
+		camera.ResetFieldOfView();
+		}
 	}
 
 
