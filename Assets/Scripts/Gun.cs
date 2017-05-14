@@ -38,7 +38,7 @@ public class Gun : MonoBehaviour {
 	public RaycastHit hit;
 
 	//Score
-	[SerializeField] GameObject ScoreManager;
+	[SerializeField] ScoreController ScoreController;
 
 
 	// Use this for initialization
@@ -81,11 +81,12 @@ public class Gun : MonoBehaviour {
 		if (Physics.Raycast(ray, out hit)) {
 			hitEffect = (GameObject)Instantiate (hitSparkle, hit.point, Muzzle.transform.rotation);
 			Destroy (hitEffect, .2f);
-
-			if(hit.collider.gameObject.transform.root.gameObject == target　&& target.GetComponent<TargetController>().isRecovered){
+			
+			TargetController targetController = target.GetComponent<TargetController>();
+			if(hit.collider.gameObject.transform.root.gameObject == target　&& targetController.isRecovered){
 				hitDistance = Vector3.Distance(HeadMaker.transform.position, hit.point);
-				target.GetComponent<TargetController>().Attacked();
-				ScoreManager.GetComponent<ScoreController>().ScorePlus(hitDistance);
+				targetController.Attacked();
+				ScoreController.ScorePlus(hitDistance);
 				}
 			}
 		}
