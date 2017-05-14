@@ -4,25 +4,41 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour {
 	
+	//弾薬数
 	public int bullet;
 	public int bulletBox;
 	int residualBullet;
 	int reloadBullet;
 
+	//クールタイム
 	[SerializeField] float coolTime;
 	float resetCoolTime;
 
+	//リロード
 	bool isReload = false;
 
+	//オーディオ
 	[SerializeField] AudioClip shootSound;
 	[SerializeField] AudioClip reloadSound;
 	AudioSource audioSource;
 
+	//パーティクル
 	[SerializeField] GameObject muzzleSparkle;
 	[SerializeField] GameObject hitSparkle;
 	[SerializeField] GameObject Muzzle;
 	GameObject muzzleEffect;
 	GameObject hitEffect;
+
+	//ターゲット
+	[SerializeField] GameObject target;
+	[SerializeField] GameObject HeadMaker;
+	float hitDistance;
+
+	//Ray
+	public RaycastHit hit;
+
+	//Score
+	[SerializeField] ScoreController ScoreController;
 
 
 	// Use this for initialization
@@ -57,7 +73,7 @@ public class Gun : MonoBehaviour {
 		coolTime = resetCoolTime;
 
 		Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
-		RaycastHit hit = new RaycastHit();
+		hit = new RaycastHit();
 			
 		muzzleEffect = (GameObject)Instantiate (muzzleSparkle, Muzzle.transform.position, Muzzle.transform.rotation);
 		Destroy (muzzleEffect, .2f);
@@ -65,11 +81,18 @@ public class Gun : MonoBehaviour {
 		if (Physics.Raycast(ray, out hit)) {
 			hitEffect = (GameObject)Instantiate (hitSparkle, hit.point, Muzzle.transform.rotation);
 			Destroy (hitEffect, .2f);
+			
+			TargetController targetController = target.GetComponent<TargetController>();
+			if(hit.collider.gameObject.transform.root.gameObject == target　&& targetController.isRecovered){
+				hitDistance = Vector3.Distance(HeadMaker.transform.position, hit.point);
+				targetController.Attacked();
+				ScoreController.ScorePlus(hitDistance);
+				}
+			}
 		}
-	}
 
 
-	 void Reload(){
+	void Reload(){
         audioSource.PlayOneShot (reloadSound);
         residualBullet += reloadBullet;
         bulletBox -= reloadBullet;
