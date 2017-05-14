@@ -7,7 +7,7 @@ public class Gun : MonoBehaviour {
 	//弾薬数
 	public int bullet;
 	public int bulletBox;
-	int residualBullet;
+	public int residualBullet;
 	int reloadBullet;
 
 	//クールタイム
